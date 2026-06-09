@@ -20,7 +20,8 @@ jobs:
       - name: Install tools and GTest
         run: |
           sudo apt update
-          sudo apt install -y cmake g++ clang libgtest-dev
+          # ИСПРАВЛЕНИЕ: Добавлены libc++-dev и libc++abi-dev для успешной линковки в Clang
+          sudo apt install -y cmake g++ clang libgtest-dev libc++-dev libc++abi-dev
           cd /usr/src/googletest && sudo cmake . && sudo cmake --build . && sudo cmake --install .
 
       - name: Configure

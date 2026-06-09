@@ -9,18 +9,14 @@ include_directories(include)
 add_executable(chain_app src/main.cpp)
 add_executable(chain_tests tests/test_chain.cpp)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+# ИСПРАВЛЕНИЕ: Линкуем проверенную stdc++ для ОБОИХ компиляторов, чтобы у Clang не было конфликтов
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_link_libraries(chain_app stdc++)
     target_link_libraries(chain_tests stdc++)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_link_libraries(chain_app c++)
-    target_link_libraries(chain_tests c++)
 endif()
 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
-
-# ИСПРАВЛЕНИЕ: Добавили библиотеку 'm' (libm) для устранения ошибки nextafter
 target_link_libraries(chain_tests ${GTEST_LIBRARIES} pthread m)
 
 enable_testing()

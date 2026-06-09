@@ -3,7 +3,12 @@
 #include <string>
 
 enum class Task {
-    CustomerIssue, Programming, HardProgramming, MoneyIssue, M_And_A, ImpossibleTask
+    CustomerIssue,
+    Programming,
+    HardProgramming,
+    MoneyIssue,
+    M_And_A,
+    ImpossibleTask
 };
 
 inline std::string GetNameOfTask(Task task) {

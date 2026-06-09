@@ -19,12 +19,13 @@ endif()
 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
-target_link_libraries(chain_tests ${GTEST_LIBRARIES} pthread)
+
+# ИСПРАВЛЕНИЕ: Добавили библиотеку 'm' (libm) для устранения ошибки nextafter
+target_link_libraries(chain_tests ${GTEST_LIBRARIES} pthread m)
 
 enable_testing()
 add_test(NAME tests COMMAND chain_tests)
 
-# Инструкция для CPack: куда устанавливать бинарник внутри DEB-пакета
 install(TARGETS chain_app DESTINATION bin)
 
 set(CPACK_GENERATOR "DEB")

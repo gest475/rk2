@@ -1,21 +1,75 @@
-name: CI
+name: CI/CD Pipeline
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
-  build:
-    name: ${{ matrix.compiler }}
+  build-and-test:
+    name: Build & Test (${{ matrix.compiler }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
         compiler: [gcc, clang]
     steps:
       - uses: actions/checkout@v4
+
       - name: Install tools
-        run: sudo apt update && sudo apt install -y cmake g++ clang
+        run: |
+          sudo apt update
+          sudo apt install -y cmake g++ clang
+
       - name: Configure
         run: cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
+
       - name: Build
         run: cmake --build build
+
       - name: Test
         run: ctest --test-dir build --output-on-failure
+
+  create-release:
+    name: Pack DEB and Release
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Build Tools
+        run: |
+          sudo apt update
+          sudo apt install -y cmake g++
+
+      - name: Configure and Build
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      - name: Create DEB Package via CPack
+        run: |
+          cd build
+          cpack
+
+      - name: Generate Tag Name
+        id: tag
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "version=v1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release and Upload DEB
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.version }}
+          name: Release ${{ steps.tag.outputs.version }}
+          files: build/*.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -7,10 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include_directories(include)
 
 add_executable(chain_app src/main.cpp)
-add_executable(chain_tests tests/test_chain.cpp)
+target_link_libraries(chain_app stdc++)
 
-target_link_libraries(chain_app)
-target_link_libraries(chain_tests)
+add_executable(chain_tests tests/test_chain.cpp)
+target_link_libraries(chain_tests stdc++)
 
 include(FetchContent)
 FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz)

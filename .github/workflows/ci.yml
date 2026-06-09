@@ -17,10 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install tools
+      - name: Install tools and GTest
         run: |
           sudo apt update
-          sudo apt install -y cmake g++ clang
+          sudo apt install -y cmake g++ clang libgtest-dev
+          cd /usr/src/googletest && sudo cmake . && sudo cmake --build . && sudo cmake --install .
 
       - name: Configure
         run: cmake -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}
@@ -41,10 +42,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Build Tools
+      - name: Install Build Tools and GTest
         run: |
           sudo apt update
-          sudo apt install -y cmake g++
+          sudo apt install -y cmake g++ libgtest-dev
+          cd /usr/src/googletest && sudo cmake . && sudo cmake --build . && sudo cmake --install .
 
       - name: Configure and Build
         run: |

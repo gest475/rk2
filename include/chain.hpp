@@ -7,101 +7,63 @@ enum class Task {
     Programming,
     HardProgramming,
     MoneyIssue,
-    M_And_A,
     ImpossibleTask
 };
 
-inline std::string GetNameOfTask(Task task) {
-    switch (task) {
-        case Task::CustomerIssue:   return "CustomerIssue";
-        case Task::Programming:     return "Programming";
-        case Task::HardProgramming: return "HardProgramming";
-        case Task::MoneyIssue:      return "MoneyIssue";
-        case Task::M_And_A:         return "M_And_A";
-        case Task::ImpossibleTask:  return "ImpossibleTask";
-        default: throw std::invalid_argument("");
-    }
-}
-
-class Worker {
+class Employee {
+protected:
+    Employee* nextHandler;
 public:
-    explicit Worker(Worker* successor) : successor_(successor) {}
-    virtual ~Worker() = default;
-    void Work(Task task) {
-        if (WorkImpl_(task)) return;
-        if (successor_) successor_->Work(task);
-        else std::cout << "Fail to handle task. (" << GetNameOfTask(task) << ")" << std::endl;
-    }
-    Worker* ChangeSuccessor(Worker* successor) {
-        Worker* old = successor_;
-        successor_ = successor;
-        return old;
-    }
-private:
-    virtual bool WorkImpl_(Task task) = 0;
-    Worker* successor_;
+    Employee(Employee* next) : nextHandler(next) {}
+    virtual ~Employee() = default;
+    virtual void Work(Task task) = 0;
 };
 
-class CustomerSupporter : public Worker {
+class CEO : public Employee {
 public:
-    using Worker::Worker;
-private:
-    bool WorkImpl_(Task task) override {
-        if (task == Task::CustomerIssue) {
-            std::cout << "[CustomerSupporter] Resolve customer issue." << std::endl;
-            return true;
-        }
-        return false;
-    }
-};
-
-class SoftwareEngineer : public Worker {
-public:
-    using Worker::Worker;
-    void Train() { isTrained_ = true; }
-private:
-    bool WorkImpl_(Task task) override {
-        if (task == Task::Programming) {
-            std::cout << "[SoftwareEngineer] Programming." << std::endl;
-            return true;
-        }
-        if (task == Task::HardProgramming) {
-            if (isTrained_) {
-                std::cout << "[SoftwareEngineer] Successfully solve hard problem!" << std::endl;
-                return true;
-            } else {
-                std::cout << "[SoftwareEngineer] Try to solve hard problem. But failed." << std::endl;
-                return false;
-            }
-        }
-        return false;
-    }
-    bool isTrained_{false};
-};
-
-class CEO : public Worker {
-public:
-    using Worker::Worker;
-private:
-    bool WorkImpl_(Task task) override {
+    CEO(Employee* next) : Employee(next) {}
+    void Work(Task task) override {
         if (task == Task::MoneyIssue) {
             std::cout << "[CEO] Resolve money issue." << std::endl;
-            return true;
+        } else if (nextHandler) {
+            nextHandler->Work(task);
         }
-        if (task == Task::M_And_A) {
-            std::cout << "[CEO] Do M&A." << std::endl;
-            return true;
-        }
-        return false;
     }
 };
 
-class God : public Worker {
-public:
-    using Worker::Worker;
+class SoftwareEngineer : public Employee {
 private:
-    bool WorkImpl_(Task) override {
+    bool trained = false;
+public:
+    SoftwareEngineer(Employee* next) : Employee(next) {}
+    void Train() { trained = true; }
+    void Work(Task task) override {
+        if (task == Task::Programming) {
+            std::cout << "[SoftwareEngineer] Programming." << std::endl;
+        } else if (task == Task::HardProgramming && trained) {
+            std::cout << "Successfully solve" << std::endl;
+        } else if (nextHandler) {
+            nextHandler->Work(task);
+        }
+    }
+};
+
+class CustomerSupporter : public Employee {
+public:
+    CustomerSupporter(Employee* next) : Employee(next) {}
+    void Work(Task task) override {
+        if (task == Task::CustomerIssue) {
+            std::cout << "[CustomerSupporter] Resolve customer issue." << std::endl;
+        } else if (nextHandler) {
+            nextHandler->Work(task);
+        }
+    }
+};
+
+class God : public Employee {
+public:
+    God(Employee* next) : Employee(next) {}
+    void Work(Task task) override {
         std::cout << "[God] God can do anything!" << std::endl;
-        return true;
     }
 };

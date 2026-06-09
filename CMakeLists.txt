@@ -17,7 +17,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_link_libraries(chain_tests c++)
 endif()
 
-# Находим Google Test, собранный в вашей системе на предыдущем шаге
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 target_link_libraries(chain_tests ${GTEST_LIBRARIES} pthread)
@@ -25,12 +24,13 @@ target_link_libraries(chain_tests ${GTEST_LIBRARIES} pthread)
 enable_testing()
 add_test(NAME tests COMMAND chain_tests)
 
+# Инструкция для CPack: куда устанавливать бинарник внутри DEB-пакета
 install(TARGETS chain_app DESTINATION bin)
 
 set(CPACK_GENERATOR "DEB")
 set(CPACK_PACKAGE_NAME "chain-app")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
-set(CPACK_PACKAGE_MAINTAINER "Student <student@university.com>")
-set(CPACK_PACKAGE_DESCRIPTION "Chain of Responsibility Lab Assignment")
+set(CPACK_PACKAGE_MAINTAINER "Arina Artemenko <arina@university.com>")
+set(CPACK_PACKAGE_DESCRIPTION "Chain of Responsibility Lab Assignment RK2")
 
 include(CPack)

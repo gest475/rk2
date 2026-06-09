@@ -17,17 +17,10 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_link_libraries(chain_tests c++)
 endif()
 
-# ИСПРАВЛЕННЫЙ БЛОК: Загрузка с жестким указанием имени файла и хэша для обхода багов парсинга в CMake 3.31+
-include(FetchContent)
-FetchContent_Declare(
-    googletest
-    URL "https://github.com"
-    DOWNLOAD_NAME googletest-v1.14.0.zip
-    URL_HASH SHA256=927827c1eeac000bf22edcdcf4ca594665401568e306a9d736629cb6076aed9a
-    DOWNLOAD_NO_PROGRESS ON
-)
-FetchContent_MakeAvailable(googletest)
-target_link_libraries(chain_tests gtest_main)
+# Находим Google Test, собранный в вашей системе на предыдущем шаге
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+target_link_libraries(chain_tests ${GTEST_LIBRARIES} pthread)
 
 enable_testing()
 add_test(NAME tests COMMAND chain_tests)

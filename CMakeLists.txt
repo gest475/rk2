@@ -17,11 +17,12 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_link_libraries(chain_tests c++)
 endif()
 
-# ИСПРАВЛЕНО: Рабочая ссылка на стабильный релиз Google Test (.zip)
+# ИСПРАВЛЕННЫЙ БЛОК: Явное указание хеша SHA256 гарантирует правильное скачивание и распаковку
 include(FetchContent)
 FetchContent_Declare(
     googletest
     URL https://github.com
+    URL_HASH SHA256=927827c1eeac000bf22edcdcf4ca594665401568e306a9d736629cb6076aed9a
 )
 FetchContent_MakeAvailable(googletest)
 target_link_libraries(chain_tests gtest_main)

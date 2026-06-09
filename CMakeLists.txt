@@ -17,6 +17,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_link_libraries(chain_tests c++)
 endif()
 
+# ИСПРАВЛЕНО: Рабочая ссылка на стабильный релиз Google Test (.zip)
 include(FetchContent)
 FetchContent_Declare(
     googletest

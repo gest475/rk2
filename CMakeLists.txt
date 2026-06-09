@@ -9,7 +9,6 @@ include_directories(include)
 add_executable(chain_app src/main.cpp)
 add_executable(chain_tests tests/test_chain.cpp)
 
-# ИСПРАВЛЕНИЕ: Линкуем проверенную stdc++ для ОБОИХ компиляторов, чтобы у Clang не было конфликтов
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_link_libraries(chain_app stdc++)
     target_link_libraries(chain_tests stdc++)
@@ -24,10 +23,12 @@ add_test(NAME tests COMMAND chain_tests)
 
 install(TARGETS chain_app DESTINATION bin)
 
+# ИСПРАВЛЕНИЕ: Добавлен обязательный параметр CPACK_PACKAGE_CONTACT для CPack 3.31+
 set(CPACK_GENERATOR "DEB")
 set(CPACK_PACKAGE_NAME "chain-app")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_MAINTAINER "Arina Artemenko <arina@university.com>")
+set(CPACK_PACKAGE_CONTACT "arina@university.com")
 set(CPACK_PACKAGE_DESCRIPTION "Chain of Responsibility Lab Assignment RK2")
 
 include(CPack)

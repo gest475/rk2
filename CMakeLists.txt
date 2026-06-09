@@ -23,7 +23,6 @@ add_test(NAME tests COMMAND chain_tests)
 
 install(TARGETS chain_app DESTINATION bin)
 
-# ИСПРАВЛЕНИЕ: Добавлен обязательный параметр CPACK_PACKAGE_CONTACT для CPack 3.31+
 set(CPACK_GENERATOR "DEB")
 set(CPACK_PACKAGE_NAME "chain-app")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")

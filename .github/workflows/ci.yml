@@ -15,7 +15,7 @@ jobs:
         run: sudo apt update && sudo apt install -y cmake g++ clang
       - name: Configure
         run: |
-          if [[ "${{ matrix.compiler }}" == "clang" ]]; then
+          if [ "${{ matrix.compiler }}" = "clang" ]; then
             cmake -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libc++"
           else
             cmake -B build -DCMAKE_CXX_COMPILER=g++
